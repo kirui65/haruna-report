@@ -1,5 +1,6 @@
 // Fetches Kenyan news from Google News RSS and writes news.json (Node 18+, no dependencies)
 import { writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 
 const P = 'hl=en-KE&gl=KE&ceid=KE:en';
 const search = (q) => `https://news.google.com/rss/search?q=${encodeURIComponent(q + ' when:2d')}&${P}`;
@@ -58,6 +59,34 @@ const tag = (block, name) => {
   return m ? decode(m[1]) : '';
 };
 
+const idFor = (link) => createHash('sha1').update(link).digest('hex').slice(0, 16);
+const htmlText = (html) => html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/\s+/g, ' ').trim();
+const meta = (html, property) => {
+  const re = new RegExp(`<meta[^>]+(?:property|name)=["']${property}["'][^>]+content=["']([^"']+)["']`, 'i');
+  const reverse = new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${property}["']`, 'i');
+  const m = html.match(re) || html.match(reverse);
+  return m ? decode(m[1]) : '';
+};
+
+async function enrich(item) {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    const res = await fetch(item.link, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' }, signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error(res.status);
+    const html = await res.text();
+    const article = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)?.[1] || '';
+    const paragraphs = [...article.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map(([, p]) => htmlText(p)).filter((p) => p.length > 40).slice(0, 80);
+    const image = meta(html, 'og:image');
+    const video = meta(html, 'og:video') || meta(html, 'og:video:url');
+    return { ...item, id: idFor(item.link), canonicalUrl: res.url || item.link, description: meta(html, 'og:description') || meta(html, 'description'), content: paragraphs, media: [...(image ? [{ type: 'image', url: image }] : []), ...(video ? [{ type: 'video', url: video }] : [])] };
+  } catch (e) {
+    console.error('Article unavailable', item.title, e.message);
+    return { ...item, id: idFor(item.link), content: [], media: [] };
+  }
+}
+
 function parse(xml) {
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, b]) => {
     let title = tag(b, 'title');
@@ -81,7 +110,8 @@ for (const c of CATEGORIES) {
       .filter((i) => !seen.has(i.title) && seen.add(i.title))
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 40);
-    out.categories.push({ id: c.id, name: c.name, items });
+    const enriched = await Promise.all(items.slice(0, 12).map(enrich));
+    out.categories.push({ id: c.id, name: c.name, items: [...enriched, ...items.slice(12).map((i) => ({ ...i, id: idFor(i.link), content: [], media: [] }))] });
     console.log(c.name, items.length);
   } catch (e) {
     console.error('Failed', c.name, e.message);

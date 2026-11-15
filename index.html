@@ -52,8 +52,9 @@ function ago(d){const m=Math.max(1,Math.round((Date.now()-new Date(d))/6e4));
   if(m<60)return m+'m ago';const h=Math.round(m/60);if(h<24)return h+'h ago';return Math.round(h/24)+'d ago';}
 function card(i,cls){const meta=`<div class="meta"><b>${esc(i.source||'News')}</b> · ${ago(i.date)}</div>`;
   const t=esc(i.title);
-  return cls==='lead'?`<a class="lead" href="${esc(i.link)}" target="_blank" rel="noopener">${meta}<h2>${t}</h2></a>`
-    :`<a class="item" href="${esc(i.link)}" target="_blank" rel="noopener"><h3>${t}</h3>${meta}</a>`;}
+  const href=`article.html?link=${encodeURIComponent(i.link)}`;
+  return cls==='lead'?`<a class="lead" href="${href}">${meta}<h2>${t}</h2></a>`
+    :`<a class="item" href="${href}"><h3>${t}</h3>${meta}</a>`;}
 function render(){
   if(!data)return;
   $('tabs').innerHTML=data.categories.map(c=>`<button class="${c.id===cat?'on':''}" data-id="${c.id}">${esc(c.name)}</button>`).join('');

@@ -14,6 +14,11 @@ jobs:
         with:
           node-version: 20
       - run: node scripts/fetch-news.mjs
+      - run: node scripts/publish-to-supabase.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_BUCKET: news-media
       - run: |
           git config user.name "haruna-bot"
           git config user.email "bot@users.noreply.github.com"
