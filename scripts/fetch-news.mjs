@@ -91,8 +91,9 @@ function parse(xml) {
   return [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(([, b]) => {
     let title = tag(b, 'title');
     const source = tag(b, 'source');
+    const sourceUrl = b.match(/<source[^>]+url=["']([^"']+)["']/i)?.[1] || '';
     if (source && title.endsWith(' - ' + source)) title = title.slice(0, -(source.length + 3));
-    return { title, link: tag(b, 'link'), source, date: new Date(tag(b, 'pubDate')).toISOString() };
+    return { title, link: tag(b, 'link'), source, sourceUrl, description: htmlText(tag(b, 'description')), date: new Date(tag(b, 'pubDate')).toISOString() };
   }).filter((i) => i.title && i.link && !isNaN(new Date(i.date)));
 }
 
