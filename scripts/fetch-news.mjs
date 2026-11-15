@@ -77,6 +77,7 @@ const SOURCE_FEEDS = {
   'citizen.digital': 'https://www.citizen.digital/rss',
 };
 const feedCache = new Map();
+const homeCache = new Map();
 const normalizeTitle = (value) => value.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 async function fromPublisherFeed(item) {
   try {
@@ -99,6 +100,16 @@ async function fromPublisherFeed(item) {
 async function resolvePublisher(item) {
   try {
     const sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./, '');
+    if (!homeCache.has(sourceHost)) homeCache.set(sourceHost, fetch(item.sourceUrl, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' } }).then((r) => r.text()).catch(() => ''));
+    const home = await homeCache.get(sourceHost);
+    const target = normalizeTitle(item.title);
+    const homeMatches = [...home.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)].map(([, href, text]) => {
+      const title = normalizeTitle(htmlText(text));
+      const words = new Set(target.split(' ').filter((w) => w.length > 3));
+      const overlap = [...words].filter((word) => title.includes(word)).length / Math.max(words.size, 1);
+      try { return { url: new URL(href, item.sourceUrl).href, overlap }; } catch { return null; }
+    }).filter(Boolean).sort((a, b) => b.overlap - a.overlap)[0];
+    if (homeMatches?.overlap >= 0.6 && new URL(homeMatches.url).hostname.replace(/^www\./, '').endsWith(sourceHost)) return homeMatches.url;
     const q = encodeURIComponent(`site:${sourceHost} "${item.title}"`);
     const res = await fetch(`https://html.duckduckgo.com/html/?q=${q}`, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' } });
     if (!res.ok) return item.link;
