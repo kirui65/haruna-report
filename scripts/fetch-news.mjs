@@ -69,6 +69,33 @@ const meta = (html, property) => {
 };
 
 const isGoogleMedia = (value) => /(?:googleusercontent|gstatic|news\.google)\./i.test(value || '');
+const SOURCE_FEEDS = {
+  'nation.africa': 'https://nation.africa/kenya/rss.xml',
+  'businessdailyafrica.com': 'https://www.businessdailyafrica.com/bd/rss',
+  'capitalfm.africa': 'https://capitalfm.africa/news/feed/',
+  'the-star.co.ke': 'https://www.the-star.co.ke/feed/',
+  'citizen.digital': 'https://www.citizen.digital/rss',
+};
+const feedCache = new Map();
+const normalizeTitle = (value) => value.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+async function fromPublisherFeed(item) {
+  try {
+    const host = new URL(item.sourceUrl).hostname.replace(/^www\./, '');
+    const feedUrl = SOURCE_FEEDS[host];
+    if (!feedUrl) return null;
+    if (!feedCache.has(host)) feedCache.set(host, fetch(feedUrl, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' } }).then((r) => r.text()).catch(() => ''));
+    const xml = await feedCache.get(host);
+    const target = normalizeTitle(item.title);
+    const matches = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map(([, block]) => {
+      const title = htmlText(tag(block, 'title'));
+      const words = new Set(target.split(' ').filter((w) => w.length > 3));
+      const overlap = [...words].filter((word) => normalizeTitle(title).includes(word)).length / Math.max(words.size, 1);
+      const image = block.match(/<(?:media:content|media:thumbnail|enclosure)[^>]+url=["']([^"']+)["']/i)?.[1] || '';
+      return { title, link: tag(block, 'link'), description: htmlText(tag(block, 'description')), image, overlap };
+    }).sort((a, b) => b.overlap - a.overlap)[0];
+    return matches?.overlap >= 0.55 ? matches : null;
+  } catch { return null; }
+}
 async function resolvePublisher(item) {
   try {
     const sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./, '');
@@ -85,7 +112,8 @@ async function resolvePublisher(item) {
 
 async function enrich(item) {
   try {
-    const articleUrl = await resolvePublisher(item);
+    const publisher = await fromPublisherFeed(item);
+    const articleUrl = publisher?.link || await resolvePublisher(item);
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     const res = await fetch(articleUrl, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' }, signal: controller.signal });
@@ -94,9 +122,9 @@ async function enrich(item) {
     const html = await res.text();
     const article = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)?.[1] || '';
     const paragraphs = [...article.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map(([, p]) => htmlText(p)).filter((p) => p.length > 40).slice(0, 80);
-    const image = meta(html, 'og:image');
+    const image = publisher?.image || meta(html, 'og:image');
     const video = meta(html, 'og:video') || meta(html, 'og:video:url');
-    const description = meta(html, 'og:description') || meta(html, 'description') || item.description;
+    const description = publisher?.description || meta(html, 'og:description') || meta(html, 'description') || item.description;
     return { ...item, id: idFor(item.link), canonicalUrl: res.url || articleUrl, description: /Comprehensive up-to-date news coverage/i.test(description) ? '' : description, content: paragraphs, media: [...(image && !isGoogleMedia(image) ? [{ type: 'image', url: image }] : []), ...(video && !isGoogleMedia(video) ? [{ type: 'video', url: video }] : [])] };
   } catch (e) {
     console.error('Article unavailable', item.title, e.message);
