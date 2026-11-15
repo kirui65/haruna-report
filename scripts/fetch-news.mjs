@@ -75,6 +75,7 @@ const SOURCE_FEEDS = {
   'capitalfm.africa': 'https://capitalfm.africa/news/feed/',
   'the-star.co.ke': 'https://www.the-star.co.ke/feed/',
   'citizen.digital': 'https://www.citizen.digital/rss',
+  'eastleighvoice.co.ke': 'https://eastleighvoice.co.ke/rss',
 };
 const feedCache = new Map();
 const homeCache = new Map();
