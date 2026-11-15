@@ -68,11 +68,27 @@ const meta = (html, property) => {
   return m ? decode(m[1]) : '';
 };
 
+const isGoogleMedia = (value) => /(?:googleusercontent|gstatic|news\.google)\./i.test(value || '');
+async function resolvePublisher(item) {
+  try {
+    const sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./, '');
+    const q = encodeURIComponent(`site:${sourceHost} "${item.title}"`);
+    const res = await fetch(`https://html.duckduckgo.com/html/?q=${q}`, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' } });
+    if (!res.ok) return item.link;
+    const html = await res.text();
+    const urls = [...html.matchAll(/uddg=([^&"]+)/g)].map(([, value]) => decodeURIComponent(value));
+    return urls.find((url) => {
+      try { return new URL(url).hostname.replace(/^www\./, '').endsWith(sourceHost); } catch { return false; }
+    }) || item.link;
+  } catch { return item.link; }
+}
+
 async function enrich(item) {
   try {
+    const articleUrl = await resolvePublisher(item);
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
-    const res = await fetch(item.link, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' }, signal: controller.signal });
+    const res = await fetch(articleUrl, { headers: { 'User-Agent': 'Mozilla/5.0 HarunaReportBot' }, signal: controller.signal });
     clearTimeout(timeout);
     if (!res.ok) throw new Error(res.status);
     const html = await res.text();
@@ -80,7 +96,8 @@ async function enrich(item) {
     const paragraphs = [...article.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map(([, p]) => htmlText(p)).filter((p) => p.length > 40).slice(0, 80);
     const image = meta(html, 'og:image');
     const video = meta(html, 'og:video') || meta(html, 'og:video:url');
-    return { ...item, id: idFor(item.link), canonicalUrl: res.url || item.link, description: meta(html, 'og:description') || meta(html, 'description'), content: paragraphs, media: [...(image ? [{ type: 'image', url: image }] : []), ...(video ? [{ type: 'video', url: video }] : [])] };
+    const description = meta(html, 'og:description') || meta(html, 'description') || item.description;
+    return { ...item, id: idFor(item.link), canonicalUrl: res.url || articleUrl, description: /Comprehensive up-to-date news coverage/i.test(description) ? '' : description, content: paragraphs, media: [...(image && !isGoogleMedia(image) ? [{ type: 'image', url: image }] : []), ...(video && !isGoogleMedia(video) ? [{ type: 'video', url: video }] : [])] };
   } catch (e) {
     console.error('Article unavailable', item.title, e.message);
     return { ...item, id: idFor(item.link), content: [], media: [] };
