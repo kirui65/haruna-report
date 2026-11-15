@@ -78,4 +78,9 @@
   popunder.setAttribute('data-cfasync', 'false');
   popunder.src = 'https://afders.org/1/698f51e4ab761a368ec9b069a0c8acc8';
   document.head.appendChild(popunder);
+
+  const socialbar = document.createElement('script');
+  socialbar.setAttribute('data-cfasync', 'false');
+  socialbar.src = 'https://bicea.org/14/4527eae75e9e3b8d3fd7a0d59138c618';
+  document.head.appendChild(socialbar);
 })();
