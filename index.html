@@ -1,74 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HARUNA REPORT – Kenya News</title>
-<meta name="description" content="Latest Kenyan news headlines, updated every 30 minutes.">
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HARUNA REPORT – Kenya News</title><meta name="description" content="Latest Kenyan news headlines, updated every 30 minutes.">
 <style>
-:root{--bg:#faf8f4;--card:#fff;--ink:#16181a;--muted:#6b7075;--line:#e4e0d8;--green:#0a6b3d;--red:#bb1a1a}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1210;--card:#171b18;--ink:#eceee9;--muted:#98a09a;--line:#262c27;--green:#3dbb7a;--red:#ef5a5a}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:900px;margin:0 auto;padding:0 16px}
-header{border-bottom:4px solid var(--ink);padding:18px 0 10px;text-align:center}
-.flag{display:flex;height:5px;max-width:120px;margin:0 auto 10px}
-.flag i{flex:1}.flag i:nth-child(1){background:#000}.flag i:nth-child(2){background:var(--red)}.flag i:nth-child(3){background:var(--green)}
-h1{margin:0;font:800 clamp(28px,7vw,46px)/1 Georgia,"Times New Roman",serif;letter-spacing:.04em}
-h1 span{color:var(--red)}
-.tag{color:var(--muted);font-size:13px;margin-top:6px}
-nav{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
-.tabs{display:flex;gap:4px;overflow-x:auto;padding:8px 0;scrollbar-width:none}
-.tabs button{border:0;background:none;color:var(--muted);font:600 14px inherit;padding:8px 12px;border-radius:20px;white-space:nowrap;cursor:pointer}
-.tabs button.on{background:var(--green);color:#fff}
-.search{width:100%;margin:12px 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:15px}
-.lead{display:block;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:18px;margin-bottom:12px;text-decoration:none;color:inherit}
-.lead h2{margin:6px 0 0;font:700 clamp(20px,4.5vw,28px)/1.25 Georgia,serif}
-.item{display:block;padding:14px 4px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit}
-.item:hover h3,.lead:hover h2{color:var(--green)}
-.item h3{margin:0 0 4px;font:600 17px/1.35 Georgia,serif}
-.meta{font-size:12.5px;color:var(--muted)}
-.meta b{color:var(--green)}
-.empty,.foot{color:var(--muted);text-align:center;padding:30px 0;font-size:13px}
-</style>
-</head>
-<body>
-<header><div class="wrap">
-  <div class="flag"><i></i><i></i><i></i></div>
-  <h1>HARUNA <span>REPORT</span></h1>
-  <div class="tag" id="stamp">Kenya news, all in one place</div>
-</div></header>
-<nav><div class="wrap"><div class="tabs" id="tabs"></div></div></nav>
-<main class="wrap">
-  <input class="search" id="q" type="search" placeholder="Search Kenyan headlines…">
-  <div id="list"></div>
-  <div class="foot">Headlines are aggregated from Google News. Tap a story to read it on the publisher’s site.<br>© HARUNA REPORT</div>
-</main>
+:root{--bg:#f7f5f0;--card:#fff;--ink:#151817;--muted:#707672;--line:#e2dfd7;--green:#08733f;--red:#bd2026;--shadow:0 8px 26px #18251b0d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{max-width:980px;margin:auto;padding:0 18px}header{border-bottom:4px solid var(--ink);padding:16px 0 14px}.brand{display:block;color:var(--ink);font:800 clamp(30px,7vw,50px)/1 Georgia,serif;letter-spacing:.05em;text-align:center;text-decoration:none}.brand span{color:var(--red)}.tag{text-align:center;color:var(--muted);font-size:13px;margin:4px 0 14px}.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}.action,.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 13px;font:600 13px inherit;cursor:pointer}.action:hover,.action.on,.tabs button.on{background:var(--green);border-color:var(--green);color:#fff}nav{position:sticky;top:0;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:5}.tabs{display:flex;gap:6px;overflow:auto;padding:9px 0;scrollbar-width:none}.tabs button{white-space:nowrap;border:0;background:transparent;color:var(--muted)}main{padding-top:8px}.search{width:100%;margin:10px 0;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:15px;outline-color:var(--green)}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0}.section-head h2{margin:0;font:700 25px Georgia,serif}.lead,.item{position:relative;display:block;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:12px;text-decoration:none;color:inherit}.lead{border-left:5px solid var(--red);padding:14px;margin-bottom:14px}.lead .thumb{width:100%;height:260px;object-fit:cover;border-radius:8px;margin-bottom:10px}.lead h2{margin:5px 38px 0 0;font:700 clamp(22px,4.5vw,34px)/1.2 Georgia,serif}.item{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:14px;padding:14px;margin:0 0 9px;min-height:118px}.item .thumb{grid-column:2;grid-row:1 / span 2;width:140px;height:96px;object-fit:cover;border-radius:8px;order:2}.copy{grid-column:1}.copy h3{margin:0 28px 5px 0;font:650 18px/1.3 Georgia,serif}.lead:hover h2,.item:hover h3{color:var(--green)}.meta{font-size:12.5px;color:var(--muted)}.meta b{color:var(--green)}.save{position:absolute;right:12px;top:12px;border:0;background:transparent;color:var(--muted);font-size:22px;line-height:1;cursor:pointer}.save.saved,.save:hover{color:var(--red)}.empty,.foot{color:var(--muted);text-align:center;padding:42px 0;font-size:13px}.foot{border-top:1px solid var(--line);margin-top:28px}@media(max-width:560px){.item{grid-template-columns:minmax(0,1fr) 96px}.item .thumb{width:96px;height:78px}}
+</style></head><body><header><div class="wrap"><a class="brand" href="index.html">HARUNA <span>REPORT</span></a><div class="tag" id="stamp">Kenya news, all in one place</div><div class="actions"><button class="action on" id="homeBtn">Home</button><button class="action" id="latestBtn">Latest</button><button class="action" id="trendingBtn">Trending</button><button class="action" id="savedBtn">Saved</button><button class="action" id="themeBtn">☾ Theme</button></div></div></header><nav><div class="wrap"><div class="tabs" id="tabs"></div></div></nav><main class="wrap"><input class="search" id="q" type="search" placeholder="Search Kenyan headlines…"><div class="section-head"><h2 id="sectionTitle">Top Stories</h2><button class="action" id="refreshBtn">↻ Refresh</button></div><div id="list"></div><div class="foot">Headlines are aggregated from Google News. Tap a story to read it on HARUNA REPORT.<br>© HARUNA REPORT</div></main>
 <script>
-const $=id=>document.getElementById(id);
-let data=null,cat='top',term='';
-const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function ago(d){const m=Math.max(1,Math.round((Date.now()-new Date(d))/6e4));
-  if(m<60)return m+'m ago';const h=Math.round(m/60);if(h<24)return h+'h ago';return Math.round(h/24)+'d ago';}
-function card(i,cls){const meta=`<div class="meta"><b>${esc(i.source||'News')}</b> · ${ago(i.date)}</div>`;
-  const t=esc(i.title);
-  const href=`article.html?link=${encodeURIComponent(i.link)}`;
-  return cls==='lead'?`<a class="lead" href="${href}">${meta}<h2>${t}</h2></a>`
-    :`<a class="item" href="${href}"><h3>${t}</h3>${meta}</a>`;}
-function render(){
-  if(!data)return;
-  $('tabs').innerHTML=data.categories.map(c=>`<button class="${c.id===cat?'on':''}" data-id="${c.id}">${esc(c.name)}</button>`).join('');
-  let items;
-  if(term){items=data.categories.flatMap(c=>c.items);const s=new Set();
-    items=items.filter(i=>i.title.toLowerCase().includes(term)&&!s.has(i.title)&&s.add(i.title)).sort((a,b)=>new Date(b.date)-new Date(a.date));}
-  else items=(data.categories.find(c=>c.id===cat)||data.categories[0]).items;
-  $('list').innerHTML=items.length?(term?'':card(items[0],'lead'))+items.slice(term?0:1).map(i=>card(i)).join(''):'<div class="empty">No stories found.</div>';
-}
-$('tabs').onclick=e=>{const b=e.target.closest('button');if(b){cat=b.dataset.id;term='';$('q').value='';render();scrollTo(0,0);}};
-$('q').oninput=e=>{term=e.target.value.trim().toLowerCase();render();};
-fetch('news.json?'+Date.now()).then(r=>r.json()).then(d=>{data=d;
-  $('stamp').textContent='Updated '+new Date(d.updated).toLocaleString('en-KE',{dateStyle:'medium',timeStyle:'short'});render();})
- .catch(()=>{$('list').innerHTML='<div class="empty">Could not load news right now.</div>';});
-</script>
-</body>
-</html>
+const $=id=>document.getElementById(id);let data=null,cat='top',term='',mode='category';const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function ago(d){const m=Math.max(1,Math.round((Date.now()-new Date(d))/6e4));if(m<60)return m+'m ago';const h=Math.round(m/60);return h<24?h+'h ago':Math.round(h/24)+'d ago'}function savedSet(){return new Set(JSON.parse(localStorage.getItem('haruna-saved')||'[]'))}function card(i,lead){const href='article.html?link='+encodeURIComponent(i.link),img=i.media?.find(m=>m.type==='image')?.url,save=savedSet().has(i.id||i.link),thumb=img?`<img class="thumb" src="${esc(img)}" alt="" loading="lazy">`:'';const meta=`<div class="meta"><b>${esc(i.source||'News')}</b> · ${ago(i.date)}</div>`;return lead?`<article class="lead">${thumb}<a href="${href}">${meta}<h2>${esc(i.title)}</h2></a><button class="save ${save?'saved':''}" data-save="${esc(i.id||i.link)}">${save?'♥':'♡'}</button></article>`:`<article class="item">${thumb}<div class="copy"><a href="${href}"><h3>${esc(i.title)}</h3>${meta}</a></div><button class="save ${save?'saved':''}" data-save="${esc(i.id||i.link)}">${save?'♥':'♡'}</button></article>`}function render(){if(!data)return;$("tabs").innerHTML=data.categories.map(c=>`<button class="${c.id===cat&&mode==='category'?'on':''}" data-id="${c.id}">${esc(c.name)}</button>`).join('');let items;if(mode==='saved'){const s=savedSet();items=data.categories.flatMap(c=>c.items).filter(i=>s.has(i.id||i.link))}else if(mode==='latest')items=data.categories.flatMap(c=>c.items).sort((a,b)=>new Date(b.date)-new Date(a.date));else if(mode==='trending')items=data.categories.flatMap(c=>c.items).filter(i=>i.media?.length).sort((a,b)=>(b.media?.length||0)-(a.media?.length||0));else if(term){const s=new Set();items=data.categories.flatMap(c=>c.items).filter(i=>i.title.toLowerCase().includes(term)&&!s.has(i.title)&&s.add(i.title)).sort((a,b)=>new Date(b.date)-new Date(a.date))}else items=(data.categories.find(c=>c.id===cat)||data.categories[0]).items;$("sectionTitle").textContent=mode==='saved'?'Saved Stories':mode==='latest'?'Latest News':mode==='trending'?'Trending':(data.categories.find(c=>c.id===cat)?.name||'News');const lead=mode==='category'&&!term;$("list").innerHTML=items.length?(lead?card(items[0],true):'')+items.slice(lead?1:0).map(i=>card(i,false)).join(''):'<div class="empty">No stories found.</div>'}function setMode(next){mode=next;term='';$('q').value='';document.querySelectorAll('.actions .action').forEach(b=>b.classList.remove('on'));$(next==='category'?'homeBtn':next+'Btn').classList.add('on');render()}$('tabs').onclick=e=>{const b=e.target.closest('button');if(b){cat=b.dataset.id;mode='category';term='';$('q').value='';render();scrollTo(0,0)}};$('q').oninput=e=>{term=e.target.value.trim().toLowerCase();render()};$('list').onclick=e=>{const b=e.target.closest('[data-save]');if(!b)return;e.preventDefault();const s=savedSet(),key=b.dataset.save;s.has(key)?s.delete(key):s.add(key);localStorage.setItem('haruna-saved',JSON.stringify([...s]));render()};$('homeBtn').onclick=()=>setMode('category');$('latestBtn').onclick=()=>setMode('latest');$('trendingBtn').onclick=()=>setMode('trending');$('savedBtn').onclick=()=>setMode('saved');$('refreshBtn').onclick=()=>location.reload();$('themeBtn').onclick=()=>{const dark=document.documentElement.dataset.theme!=='dark';document.documentElement.dataset.theme=dark?'dark':'';document.documentElement.style.setProperty('--bg',dark?'#0f1210':'#f7f5f0');document.documentElement.style.setProperty('--card',dark?'#171b18':'#fff');document.documentElement.style.setProperty('--ink',dark?'#eceee9':'#151817');document.documentElement.style.setProperty('--line',dark?'#29302b':'#e2dfd7')};fetch('news.json?'+Date.now()).then(r=>r.json()).then(d=>{data=d;$('stamp').textContent='Updated '+new Date(d.updated).toLocaleString('en-KE',{dateStyle:'medium',timeStyle:'short'});render()}).catch(()=>$('list').innerHTML='<div class="empty">Could not load news right now.</div>');
+</script></body></html>
