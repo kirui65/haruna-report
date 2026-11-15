@@ -19,8 +19,11 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_BUCKET: news-media
+      - run: node scripts/build-article-pages.mjs
+        env:
+          SITE_URL: https://haruna-report.vercel.app
       - run: |
           git config user.name "haruna-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add news.json
+          git add news.json articles og-default.svg
           git diff --staged --quiet || (git commit -m "Update news" && git push)
