@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
-const site = process.env.SITE_URL || 'https://haruna-report.vercel.app';
+const site = process.env.SITE_URL || 'https://harunadigital.com';
 const defaultImage = `${site}/og-default.svg`;
 const esc = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const data = JSON.parse(await readFile('news.json', 'utf8'));
