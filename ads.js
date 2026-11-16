@@ -1,5 +1,5 @@
 (function () {
-  const pageTarget = document.querySelector('aside') || document.querySelector('.actions')?.parentElement;
+  const pageTarget = document.querySelector('aside') || document.querySelector('main');
   if (!pageTarget) return;
 
   const ads = [
@@ -56,9 +56,13 @@
     pageTarget.prepend(smartSlot);
   } else {
     const actions = pageTarget.querySelector('.actions');
-    slots.forEach(slot => actions?.after(slot));
-    actions?.after(nativeSlot);
-    actions?.after(smartSlot);
+    if (actions) {
+      slots.forEach(slot => actions.after(slot));
+      actions.after(nativeSlot);
+      actions.after(smartSlot);
+    } else {
+      pageTarget.append(smartSlot, nativeSlot, ...slots);
+    }
   }
 
   // Load units in order because the provider reads the global atOptions object.
