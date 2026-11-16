@@ -21,10 +21,10 @@ jobs:
           SUPABASE_BUCKET: news-media
       - run: node scripts/build-article-pages.mjs
         env:
-          SITE_URL: https://haruna-report.vercel.app
+          SITE_URL: https://harunadigital.com
       - run: node scripts/build-sitemap.mjs
         env:
-          SITE_URL: https://haruna-report.vercel.app
+          SITE_URL: https://harunadigital.com
       - run: |
           git config user.name "haruna-bot"
           git config user.email "bot@users.noreply.github.com"
