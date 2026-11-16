@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
-const site = process.env.SITE_URL || 'https://haruna-report.vercel.app';
+const site = process.env.SITE_URL || 'https://harunadigital.com';
 const data = JSON.parse(await readFile('news.json', 'utf8'));
 const items = data.categories.flatMap((category) => category.items);
 const esc = (value) => String(value).replace(/[<>&'\"]/g, (char) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[char]));
