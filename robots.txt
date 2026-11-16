@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://haruna-report.vercel.app/sitemap.xml
+Sitemap: https://harunadigital.com/sitemap.xml
